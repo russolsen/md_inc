@@ -20,8 +20,8 @@ Or install it yourself as:
 
 Vacuum is a simple text inclusion filter intended for use
 with markdown and similar text formatting utilities. 
-Vacumm provides simple 'include this other file' kind
-of processing. Using vacuum is pretty simple: just require
+Vacuum provides simple 'include this other file' kind
+of processing. Using vacuum is straight forwark: Just require
 it in and use the process method:
 
     require 'vacuum'
@@ -47,7 +47,7 @@ will include the contents of `some_other_file.md`
 embedded in it.
 
 You can also pluck out only part of the included
-file based on some regular expressions:
+file based on a pair of regular expressions:
 
     Here we are going to include only part of file1,
 	just the lines between START and END.
@@ -55,7 +55,7 @@ file based on some regular expressions:
 	Note that the lines matching START and END are
 	not included in the output.
 
-You can also exclude lines based on a regular expression:
+And you can exclude lines based on a regular expression:
 
     Pull in the contents of file1, skipping any
 	lines that contain DONTWANT
