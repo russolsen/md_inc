@@ -22,9 +22,9 @@ module MdInc
 
       def code_inc(path, language='', re1=nil, re2=nil)
         if re1
-          code(language, between(re1, re2, inc(path)))
+          code(language, normalize_indent(between(re1, re2, inc(path))))
         else
-          code(language, inc(path))
+          code(language, normalize_indent(inc(path)))
         end
       end
 
@@ -54,6 +54,22 @@ module MdInc
           output << l unless l =~ re
         end
         output
+      end
+
+      def normalize_indent(lines)
+        min_indent = min_indent(lines)
+        lines.map {|l| l[min_indent..-1]}
+      end
+
+      private
+
+      def min_indent(lines)
+        indents = lines.map {|l| indent_depth(l)}
+        indents.min
+      end
+
+      def indent_depth(s)
+        /^ */.match(s).end(0)
       end
     end
   end
