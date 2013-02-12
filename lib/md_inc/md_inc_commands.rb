@@ -3,7 +3,9 @@ module MdInc
     public :instance_eval
 
     class << self
-      attr_accessor :root
+      def root(path)
+        @root = path
+      end
 
       def full_path(path)
         @root ? File.join(@root, path) : path

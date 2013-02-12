@@ -10,6 +10,11 @@ op = OptionParser.new do |op|
     exit 0
   end
 
+  op.on "-v", "--version", "Print gem version" do
+    puts "MdInc version #{MdInc::VERSION}"
+    exit 0
+  end
+
   op.on "-i dir", "--include dir", "Add this directory to the Ruby path" do |dir|
     $: << dir
   end
