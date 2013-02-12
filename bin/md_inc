@@ -5,16 +5,16 @@ require "md_inc"
 base_dir = nil
 
 op = OptionParser.new do |op|
-  on "-h", "--help", "Print help string" do
+  op.on "-h", "--help", "Print help string" do
     puts op
     exit 0
   end
 
-  on "-i dir", "--include dir", "Add this directory to the Ruby path" do |dir|
+  op.on "-i dir", "--include dir", "Add this directory to the Ruby path" do |dir|
     $: << dir
   end
 
-  on '-d dir', '--dir dir', "Set the default dir for pulling incldue files" do |dir|
+  op.on '-d dir', '--dir dir', "Set the default dir for pulling incldue files" do |dir|
     base_dir = dir
   end
 end
@@ -25,9 +25,9 @@ tp = MdInc::TextProcessor.new
 tp.base_dir = base_dir if base_dir
 
 if ARGV.empty?
-  tp.process_stream(STDIN)
+  puts tp.process_stream(STDIN)
 else
   ARGV.each do |path|
-    tp.process_file(path)
+    puts tp.process_file(path)
   end
 end
