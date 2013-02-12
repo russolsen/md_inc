@@ -20,7 +20,7 @@ module MdInc
         lines.map &:rstrip!
       end
 
-      def code_inc(path, language='', re1=nil, re2=nil)
+      def code_inc(path, language=nil, re1=nil, re2=nil)
         if re1
           code(language, normalize_indent(between(re1, re2, inc(path))))
         else
@@ -29,7 +29,11 @@ module MdInc
       end
 
       def code(language, lines)
-        ["```#{language}"] + lines + ["```"]
+        unless language.nil?
+          ["```#{language}"] + lines + ["```"]
+        else
+          lines.map {|l| l.rstrip.prepend('    ')}
+        end
       end
 
       def between(re1, re2, lines)
