@@ -1,7 +1,7 @@
-require 'vacuum/version'
-require 'vacuum/vacuum_commands'
+require 'md_inc/version'
+require 'md_inc/md_inc_commands'
 
-module Vacuum
+module MdInc
   class TextProcessor
     def process(content)
       output = []

@@ -1,4 +1,4 @@
-module Vacuum
+module MdInc
   module Commands
     public :instance_eval
 
