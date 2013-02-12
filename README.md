@@ -21,7 +21,7 @@ Or install it yourself as:
 MdInc is a simple text inclusion filter intended for use
 with markdown and similar text formatting utilities. 
 MdInc provides simple 'include this other file' kind
-of processing. Using MdInc is straight forwark: Just require
+of processing. Using MdInc is straightforward: Just require
 it in and use the process method:
 
     require 'md_inc'
