@@ -21,7 +21,7 @@ Or install it yourself as:
 MdInc is a simple text inclusion filter intended for use
 with markdown and similar text formatting utilities. 
 MdInc provides simple 'include this other file' kind
-of processing. Using md_inc is straight forwark: Just require
+of processing. Using MdInc is straight forwark: Just require
 it in and use the process method:
 
     require 'md_inc'
@@ -29,9 +29,9 @@ it in and use the process method:
     v = MdInc::TextProcessor.new
     output = v.process 'The quick brown fox'
     
-In the simple case like the one above, md_inc simply 
+In the simple case like the one above, MdInc simply 
 returns the text unchanged. The interesting bit is
-when your input text includes commands that md_inc
+when your input text includes commands that MdInc
 recognizes. MdInc commands all start with a . in
 the first column of a line. The most basic is
 `.inc`. Here is some input that includes an `.inc` 
@@ -42,7 +42,7 @@ command:
     .inc 'some_other_file.md'
     And the last line.
 
-Run the file above through md_inc and the output
+Run the file above through MdInc and the output
 will include the contents of `some_other_file.md`
 embedded in it.
 
