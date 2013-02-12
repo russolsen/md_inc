@@ -18,16 +18,16 @@ module MdInc
         lines.map &:rstrip!
       end
 
-      def code_inc(path, re1=nil, re2=nil)
+      def code_inc(path, language='', re1=nil, re2=nil)
         if re1
-          code(between(re1, re2, inc(path)))
+          code(language, between(re1, re2, inc(path)))
         else
-          code(inc(path))
+          code(language, inc(path))
         end
       end
 
-      def code(lines)
-        lines.map {|l| l.rstrip.prepend('    ')}
+      def code(language, lines)
+        ["```#{language}"] + lines + ["```"]
       end
 
       def between(re1, re2, lines)
