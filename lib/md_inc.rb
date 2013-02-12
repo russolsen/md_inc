@@ -3,6 +3,14 @@ require 'md_inc/md_inc_commands'
 
 module MdInc
   class TextProcessor
+    def process_stream(s)
+      process(s.read)
+    end
+
+    def process_file(path)
+      process(File.read(path))
+    end
+
     def process(content)
       output = []
       content.split("\n").each do |line|
