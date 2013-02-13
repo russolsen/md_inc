@@ -19,15 +19,15 @@ op = OptionParser.new do |op|
     $: << dir
   end
 
-  op.on '-d dir', '--dir dir', "Set the default dir for pulling incldue files" do |dir|
+  op.on '-d dir', '--dir dir', "Set the default dir for pulling include files" do |dir|
     base_dir = dir
   end
 end
 
 op.parse!
 
+MdInc::Commands::root(base_dir) unless base_dir.nil?
 tp = MdInc::TextProcessor.new
-tp.base_dir = base_dir if base_dir
 
 if ARGV.empty?
   puts tp.process_stream(STDIN)
