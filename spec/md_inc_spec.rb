@@ -1,6 +1,70 @@
 require 'md_inc'
 require 'fileutils'
 
+describe MdInc::Commands do
+  context '#code' do
+    it 'uses git style tagging if a language is supplied' do
+      output = MdInc::Commands.code("java", %w{foo})
+      output.should == [ "```java", "foo", "```"]
+    end
+
+    it 'uses traditional code indenting if a language is not supplied' do
+      output = MdInc::Commands.code(nil, %w{foo})
+      output.should == [ "    foo"]
+    end
+  end
+
+  context '#skip' do
+    let(:lines) { %w{foo skip1 skip2 bar skip3 baz skip4 skip5} }
+
+    it 'skips the lines that match the regular expression' do
+      output = MdInc::Commands.skip(/skip/, lines)
+      output.should == %w{foo bar baz}
+    end
+
+    it 'doesnt skip the lines that down match the regular expression' do
+      output = MdInc::Commands.skip(/no match/, lines)
+      output.should == lines
+    end
+  end
+
+  context '#between' do
+    let(:lines) { %w{aaa bbb ccc ddd eee} }
+
+    it 'returns the lines between the patterns, exclusive' do
+      output = MdInc::Commands.between(/aaa/, /ddd/, lines)
+      output.should == %w{bbb ccc}
+    end
+
+    it 'will skip the whole output if first re doesnt match' do
+      output = MdInc::Commands.between(/no match/, /ccc/, lines)
+      output.should == []
+    end
+  end
+
+  context '#normalize_indent' do
+    it 'does nothing to non-indented lines' do
+      lines = %w{aaa, bbb, ccc}
+      output = MdInc::Commands.normalize_indent(lines)
+      output.should == lines
+    end
+
+    it 'does nothing to lines with at least one non-indented line' do
+      lines = ['  aaa', 'bbb', '         ccc']
+      output = MdInc::Commands.normalize_indent(lines)
+      output.should == lines
+    end
+
+    it 'unindents so that the least indented line has no indent' do
+      lines = [' aaa', '  bbb', '   ccc']
+      output = MdInc::Commands.normalize_indent(lines)
+      output.should == ['aaa', ' bbb', '  ccc']
+    end
+
+  end
+
+end
+
 describe MdInc::TextProcessor do
   let(:mdi) { MdInc::TextProcessor.new }
 
@@ -72,7 +136,6 @@ describe MdInc::TextProcessor do
     it 'can do recursive inclusion' do
       text = "first\n.inc 'temp3'\nlast"
       output = mdi.process(text)
-puts output
       output.should == "first\ntemp3 line1\naaa\nbbb\ntemp3 line3\nlast"      
     end
   end
