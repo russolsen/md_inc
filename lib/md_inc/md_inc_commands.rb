@@ -16,11 +16,7 @@ module MdInc
 
       def process_lines(lines)
         lines.map do |line|
-          if /^\./ =~ line
-            instance_eval(line[1..-1])
-          else
-            line
-          end
+          (line[0] == '.') ? instance_eval(line[1..-1]) : line
         end
       end        
 
@@ -43,10 +39,10 @@ module MdInc
       end
 
       def code(language, lines)
-        unless language.nil?
-          ["```#{language}"] + lines + ["```"]
-        else
+        if language.nil?
           lines.map {|l| l.rstrip.prepend('    ')}
+        else
+          ["```#{language}"] + lines + ["```"]          
         end
       end
 
