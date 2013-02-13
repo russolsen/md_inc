@@ -1,7 +1,5 @@
 module MdInc
   module Commands
-    public :instance_eval
-
     class << self
       def root(path)
         @root = path
@@ -11,13 +9,29 @@ module MdInc
         @root ? File.join(@root, path) : path
       end
 
+      def process(content)
+        output = process_lines(content.split("\n"))
+        output.flatten.join("\n")
+      end
+
+      def process_lines(lines)
+        lines.map do |line|
+          if /^\./ =~ line
+            instance_eval(line[1..-1])
+          else
+            line
+          end
+        end
+      end        
+
       def x(*args)
         []
       end
 
-      def inc(path)
+      def inc(path, recursive=true)
         lines = File.readlines(full_path(path))
-        lines.map &:rstrip!
+        lines.map! &:rstrip
+        recursive ? process_lines(lines) : lines
       end
 
       def code_inc(path, language=nil, re1=nil, re2=nil)

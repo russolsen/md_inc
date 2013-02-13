@@ -28,11 +28,18 @@ describe MdInc::TextProcessor do
       File.open("temp2",'w') do |f|
         1.upto(10) {|n| f.puts "line #{n}" }
       end
+
+      File.open("temp3",'w') do |f|
+        f.puts "temp3 line1"
+        f.puts ".inc 'temp1'"
+        f.puts "temp3 line3"
+      end
     end
 
     after :each do
       FileUtils.rm_f("temp1")
       FileUtils.rm_f("temp2")
+      FileUtils.rm_f("temp3")
     end
 
     it 'can pull in the contents of another file with inc' do
@@ -60,6 +67,13 @@ describe MdInc::TextProcessor do
       text = ".x require 'new_commands'\nfirst\n.inc_up 'temp1'\nlast"
       output = mdi.process(text)
       output.should == "first\nAAA\nBBB\nlast"
+    end
+
+    it 'can do recursive inclusion' do
+      text = "first\n.inc 'temp3'\nlast"
+      output = mdi.process(text)
+puts output
+      output.should == "first\ntemp3 line1\naaa\nbbb\ntemp3 line3\nlast"      
     end
   end
 end
