@@ -26,8 +26,8 @@ end
 
 op.parse!
 
+MdInc::Commands::root(base_dir) unless base_dir.nil?
 tp = MdInc::TextProcessor.new
-tp.base_dir = base_dir if base_dir
 
 if ARGV.empty?
   puts tp.process_stream(STDIN)
