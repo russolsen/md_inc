@@ -79,6 +79,11 @@ describe MdInc::TextProcessor do
       mdi.process(text).should == text
     end
 
+    it 'handles empty command' do
+      text = '.'
+      mdi.process(text).should == text
+    end
+
     it 'can require in plain old ruby files' do
       text = '.x require "set"'
       mdi.process(text).should == ''
