@@ -3,6 +3,10 @@ require 'md_inc/md_inc_commands'
 
 module MdInc
   class TextProcessor
+    def root(path)
+      Commands.root(path)
+    end
+
     def process(string)
       Commands.process(string)
     end
