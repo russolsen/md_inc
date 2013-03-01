@@ -18,7 +18,7 @@ module MdInc
         lines.map do |line|
           (line[0] == '.') ? instance_eval(line[1..-1]) : line
         end
-      end        
+      end
 
       def x(*args)
         []
