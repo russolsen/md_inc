@@ -16,7 +16,7 @@ module MdInc
 
       def process_lines(lines)
         lines.map do |line|
-          (line[0] == '.') ? instance_eval(line[1..-1]) : line
+          (line.length > 1 && line[0] == '.') ? instance_eval(line[1..-1]) : line
         end
       end
 
