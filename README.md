@@ -16,6 +16,11 @@ Or install it yourself as:
 
     $ gem install md_inc
 
+**Note that with version 0.3.0 the API for adding
+new commands has changed. You command functions
+should be ordinary methods, not module methods
+as before.**
+
 ## Usage
 
 MdInc is a simple text inclusion filter intended for use
@@ -61,7 +66,22 @@ And you can exclude lines based on a regular expression:
     lines that contain DONTWANT
     .skip(/DONTWANT/, inc('file1'))
 
-As you can probably guess from this last example,
+Along with .commands there are also ..commands. The
+difference is that ..command can handle inline text.
+Here's an example that makes all the lines uppercase:
+
+    ..upcase_content
+    some text
+    that will
+    become uppercase
+    ..end
+
+If your command starts with an .., md\_inc will gather up
+all of the following lines until it hits a ..end and
+makes those lines available to the command via the
+`content` method.
+
+As you can probably guess from the examples,
 the MdInc dot commands are really just inline Ruby
 code that gets executed during file processing.
 Because of this it's easy to extend MdInc with

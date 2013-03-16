@@ -1,6 +1,5 @@
 module MdInc
   module Commands
-    class << self
       def root(path)
         @root = path
       end
@@ -9,15 +8,64 @@ module MdInc
         @root ? File.join(@root, path) : path
       end
 
+      def content
+        @content
+      end
+
+      def process_file(file_name)
+        process(File.read(file_name))
+      end
+
       def process(content)
         output = process_lines(content.split("\n"))
         output.flatten.join("\n")
       end
 
       def process_lines(lines)
-        lines.map do |line|
-          (line.length > 1 && line[0] == '.') ? instance_eval(line[1..-1]) : line
+        result = []
+        until lines.empty?
+          line = lines.shift
+          ltype = line_type(line)
+
+          if ltype == :multi_line_cmd
+            result +=process_multiline_cmd(line, lines)
+          elsif ltype == :single_line_cmd
+            result << process_single_line_cmd(line)
+          else
+            result << line
+          end
         end
+        result
+      end
+
+      def line_type(line)
+        if %{. ..}.include?(line)
+          :text
+        elsif line[0,2] == '..'
+          :multi_line_cmd
+        elsif line[0,1] == '.'
+          :single_line_cmd
+        else
+          :text
+        end
+      end
+
+      def process_single_line_cmd(line)
+        #puts "single line cmd: #{line}"
+        instance_eval(line[1..-1])
+      end
+
+      def process_multiline_cmd(line, lines)
+        content_lines = []
+        until lines.empty? || (lines.first =~ /^..end/)
+          content_lines << lines.shift
+        end
+        lines.shift unless lines.empty?
+        save_content = @content
+        @content = content_lines
+        result = instance_eval(line[2..-1])
+        @content = @save_content
+        result
       end
 
       def x(*args)
@@ -42,7 +90,7 @@ module MdInc
         if language.nil?
           lines.map {|l| l.rstrip.prepend('    ')}
         else
-          ["```#{language}"] + lines + ["```"]          
+          ["```#{language}"] + lines + ["```"]
         end
       end
 
@@ -75,6 +123,10 @@ module MdInc
         lines.map {|l| l[min_indent..-1]}
       end
 
+      def upcase_content
+        content.map {|l| l.upcase}
+      end
+
       private
 
       def min_indent(lines)
@@ -85,6 +137,6 @@ module MdInc
       def indent_depth(s)
         /^ */.match(s).end(0)
       end
+
     end
-  end
 end

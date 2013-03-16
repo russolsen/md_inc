@@ -1,22 +1,32 @@
 require 'md_inc/version'
 require 'md_inc/md_inc_commands'
+require 'ostruct'
 
 module MdInc
   class TextProcessor
-    def root(path)
-      Commands.root(path)
+    attr_accessor :root
+
+    def initialize(options={})
+      @options = options
     end
 
     def process(string)
-      Commands.process(string)
+      context = OpenStruct.new(@options)
+      context.root = root
+      context.options = @options
+      context.extend Commands
+      if @options[:modules]
+        @options[:modules].each {|m| context.extend m}
+      end
+      context.process(string)
     end
 
     def process_stream(stream)
-      Commands.process(stream.read)
+      process(stream.read)
     end
 
     def process_file(path)
-      Commands.process(File.read(path))
+      process(File.read(path))
     end
   end
 end

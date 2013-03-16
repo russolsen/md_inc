@@ -2,14 +2,20 @@ require 'md_inc'
 require 'fileutils'
 
 describe MdInc::Commands do
+  let(:context) do
+    o = Object.new
+    o.extend MdInc::Commands
+    o
+  end
+
   context '#code' do
     it 'uses git style tagging if a language is supplied' do
-      output = MdInc::Commands.code("java", %w{foo})
+      output = context.code("java", %w{foo})
       output.should == [ "```java", "foo", "```"]
     end
 
     it 'uses traditional code indenting if a language is not supplied' do
-      output = MdInc::Commands.code(nil, %w{foo})
+      output = context.code(nil, %w{foo})
       output.should == [ "    foo"]
     end
   end
@@ -18,12 +24,12 @@ describe MdInc::Commands do
     let(:lines) { %w{foo skip1 skip2 bar skip3 baz skip4 skip5} }
 
     it 'skips the lines that match the regular expression' do
-      output = MdInc::Commands.skip(/skip/, lines)
+      output = context.skip(/skip/, lines)
       output.should == %w{foo bar baz}
     end
 
     it 'doesnt skip the lines that down match the regular expression' do
-      output = MdInc::Commands.skip(/no match/, lines)
+      output = context.skip(/no match/, lines)
       output.should == lines
     end
   end
@@ -32,12 +38,12 @@ describe MdInc::Commands do
     let(:lines) { %w{aaa bbb ccc ddd eee} }
 
     it 'returns the lines between the patterns, exclusive' do
-      output = MdInc::Commands.between(/aaa/, /ddd/, lines)
+      output = context.between(/aaa/, /ddd/, lines)
       output.should == %w{bbb ccc}
     end
 
     it 'will skip the whole output if first re doesnt match' do
-      output = MdInc::Commands.between(/no match/, /ccc/, lines)
+      output = context.between(/no match/, /ccc/, lines)
       output.should == []
     end
   end
@@ -45,24 +51,33 @@ describe MdInc::Commands do
   context '#normalize_indent' do
     it 'does nothing to non-indented lines' do
       lines = %w{aaa, bbb, ccc}
-      output = MdInc::Commands.normalize_indent(lines)
+      output = context.normalize_indent(lines)
       output.should == lines
     end
 
     it 'does nothing to lines with at least one non-indented line' do
       lines = ['  aaa', 'bbb', '         ccc']
-      output = MdInc::Commands.normalize_indent(lines)
+      output = context.normalize_indent(lines)
       output.should == lines
     end
 
     it 'unindents so that the least indented line has no indent' do
       lines = [' aaa', '  bbb', '   ccc']
-      output = MdInc::Commands.normalize_indent(lines)
+      output = context.normalize_indent(lines)
       output.should == ['aaa', ' bbb', '  ccc']
     end
 
   end
+end
 
+module TestModule
+  def test_cmd
+    ['line 1 from module', 'line 2 from module']
+  end
+
+  def return_option(name)
+    [options[name]]
+  end
 end
 
 describe MdInc::TextProcessor do
@@ -141,7 +156,39 @@ describe MdInc::TextProcessor do
     it 'can do recursive inclusion' do
       text = "first\n.inc 'temp3'\nlast"
       output = mdi.process(text)
-      output.should == "first\ntemp3 line1\naaa\nbbb\ntemp3 line3\nlast"      
+      output.should == "first\ntemp3 line1\naaa\nbbb\ntemp3 line3\nlast"
+    end
+
+    it 'can optionally include other modules for commands' do
+      processor = MdInc::TextProcessor.new :modules => [TestModule]
+      text = "first\n.test_cmd\nlast"
+      output = processor.process(text)
+      output.should == "first\nline 1 from module\nline 2 from module\nlast"
+    end
+
+    it 'can asscess the options hash from inside of a command' do
+      processor = MdInc::TextProcessor.new :modules => [TestModule], :color => "GREEN"
+      text = "first\n.return_option :color\nlast"
+      output = processor.process(text)
+      output.should == "first\nGREEN\nlast"
+    end
+
+    it 'has a working multiline example command in upcase_content' do
+      text = "first\n..upcase_content\naaa\nbbb\nccc\n..end\nlast"
+      output = mdi.process(text)
+      output.should == "first\nAAA\nBBB\nCCC\nlast"
+    end
+
+    it 'handles multiline commands correctly' do
+      text = ".x require 'new_commands'\nfirst\n..multi_up\naaa\nbbb\n..end\nccc"
+      output = mdi.process(text)
+      output.should == "first\nAAA\nBBB\nccc"
+    end
+
+    it 'handles .. as text, not as a multiline command' do
+      text = "\nfirst\n..\nlast"
+      output = mdi.process(text)
+      output.should == text
     end
   end
 end

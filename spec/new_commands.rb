@@ -4,8 +4,12 @@
 # module and off you go.
 module MdInc
   module Commands
-    def self.inc_up(path)
+    def inc_up(path)
       inc(path).map {|s| s.upcase!}
+    end
+
+    def multi_up
+      content.map {|l| l.upcase}
     end
   end
 end

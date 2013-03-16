@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    md_inc (0.2.6)
+    md_inc (0.2.9)
 
 GEM
   remote: https://rubygems.org/
