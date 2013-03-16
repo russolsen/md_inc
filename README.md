@@ -17,7 +17,7 @@ Or install it yourself as:
     $ gem install md_inc
 
 **Note that with version 0.3.0 the API for adding
-new commands has changed. You command functions
+new commands has changed. You command methodss
 should be ordinary methods, not module methods
 as before.**
 
