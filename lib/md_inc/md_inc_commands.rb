@@ -1,11 +1,11 @@
 module MdInc
   module Commands
-      def root(path)
-        @root = path
-      end
-
       def full_path(path)
-        @root ? File.join(@root, path) : path
+        if options[:base_dir]
+          File.join(options[:base_dir], path)
+        else
+          path
+        end
       end
 
       def content

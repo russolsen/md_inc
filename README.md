@@ -16,10 +16,22 @@ Or install it yourself as:
 
     $ gem install md_inc
 
-**Note that with version 0.3.0 the API for adding
-new commands has changed. You command methodss
+## API Changes
+
+The MdInc API has changed somewhat with the
+0.3.x releases:
+* With version 0.3.0 the API for adding
+new commands has changed. You command methods
 should be ordinary methods, not module methods
-as before.**
+as before.
+* Version 0.3.1 fixes and at the same time changes
+the way that the base directory for the included files
+works. In pre-0.3 versions you would use the `root`
+method to set the base directory. In newer version
+you can set the base directory by passing an options
+tag to the constructor:
+
+    processor = MdInc::TextProcessor.new(:base_dir => '/etc')
 
 ## Usage
 
