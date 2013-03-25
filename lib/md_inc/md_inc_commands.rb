@@ -50,9 +50,18 @@ module MdInc
         end
       end
 
+      def evaluate(string)
+        begin
+          instance_eval(string)
+        rescue
+          puts "Error evaluating #{string}"
+          puts $!
+          puts caller
+        end
+      end
+
       def process_single_line_cmd(line)
-        #puts "single line cmd: #{line}"
-        instance_eval(line[1..-1])
+        evaluate(line[1..-1])
       end
 
       def process_multiline_cmd(line, lines)
@@ -63,7 +72,7 @@ module MdInc
         lines.shift unless lines.empty?
         save_content = @content
         @content = content_lines
-        result = instance_eval(line[2..-1])
+        result = evaluate(line[2..-1])
         @content = @save_content
         result
       end
