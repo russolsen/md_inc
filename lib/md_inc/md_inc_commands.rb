@@ -32,7 +32,7 @@ module MdInc
           elsif ltype == :single_line_cmd
             result << process_single_line_cmd(line)
           else
-            result << line
+            result << process_text(line)
           end
         end
         result
@@ -58,6 +58,11 @@ module MdInc
           puts $!
           puts caller
         end
+      end
+
+      def process_text(text)
+        # Do nothing, allows plugins to override to provide custom processing.
+        text
       end
 
       def process_single_line_cmd(line)
